@@ -10,7 +10,7 @@ export class CompanyService {
   ) {}
 
   async createCompany(data: CreateCompanyData): Promise<Company> {
-    const existingCompany = await this.companyRepository.findOne({cuit: data.cuit})
+    const existingCompany = await this.companyRepository.searchOne({cuit: data.cuit})
     if (existingCompany) {
       throw new AppError("ALREADY_EXIST", "Company with this CUIT already exists")
     }

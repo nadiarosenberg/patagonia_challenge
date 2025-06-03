@@ -1,26 +1,24 @@
 import express from "express"
 import cors from "cors"
 import helmet from "helmet"
-import dotenv from "dotenv"
 import { companySchema } from "./adapters/db/mongo/schemas/companySchema"
 import { transferSchema } from "./adapters/db/mongo/schemas/transferSchema"
-import { CompanyService } from "./core/use-cases/companyService"
+import { CompanyService } from "./core/services/companyService"
 import { CompanyController } from "./adapters/api/controllers/companyController"
 import { createCompanyRoutes } from "./adapters/api/routes/companyRoutes"
 import { openMongoConnection } from "./config/mongo"
 import { CompanyRepository } from "./adapters/db/repositories/companyRepository"
 import { TransferRepository } from "./adapters/db/repositories/transferRepository"
 import { manageError } from "./adapters/api/middlewares/errorHandler"
+import { configVars } from './config';
 
-dotenv.config()
-
-class Server {
+class App {
   private app: express.Application
   private port: number
 
   constructor() {
     this.app = express()
-    this.port = Number.parseInt(process.env.HTTP_PORT || "3000", 10)
+    this.port = configVars.http.port,
     this.setupMiddleware()
     this.setupRoutes()
     this.setupErrorHandling()
@@ -34,8 +32,8 @@ class Server {
   }
 
   private setupRoutes(): void {
-    const companyRepository = new CompanyRepository("company", companySchema)
-    const transferRepository = new TransferRepository("transfer", transferSchema)
+    const companyRepository = new CompanyRepository()
+    const transferRepository = new TransferRepository()
 
     const companyService = new CompanyService(companyRepository)
 
@@ -48,12 +46,12 @@ class Server {
   }
 
   private setupErrorHandling(): void {
-    this.app.use(manageError)
+    this.app.use(manageError);
   }
 
   public async start(): Promise<void> {
     try {
-      await openMongoConnection('uri')
+      await openMongoConnection(configVars.mongo.uri)
 
       this.app.listen(this.port, () => {
         console.log(`Server running on port ${this.port}`)
@@ -66,5 +64,5 @@ class Server {
   }
 }
 
-const server = new Server()
-server.start()
+const app = new App()
+app.start()

@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express"
-import { CompanyService } from "../../../core/use-cases/companyService"
+import { CompanyService } from "../../../core/services/companyService"
 import { createCompanySchema } from "../validators/companyValidators"
 
 export class CompanyController {
@@ -9,10 +9,7 @@ export class CompanyController {
     try {
       const validatedData = createCompanySchema.parse(req.body)
       const company = await this.companyService.createCompany(validatedData)
-      res.status(201).json({
-        success: true,
-        data: company,
-      })
+      res.status(201).json(company);
     } catch (error) {
       next(error)
     }

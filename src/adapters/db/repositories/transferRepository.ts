@@ -1,4 +1,8 @@
-import { MongoDBRepository } from "../mongo/mongoRepository";
-import { TransferDocument } from "../mongo/schemas/transferSchema";
+import { MongoRepository } from "../mongo/mongoRepository";
+import { TransferDocument, transferSchema } from "../mongo/schemas/transferSchema";
 
-export class TransferRepository extends MongoDBRepository<TransferDocument> {}
+export class TransferRepository extends MongoRepository<TransferDocument> {
+    constructor() {
+      super("transfer", transferSchema);
+    }
+}

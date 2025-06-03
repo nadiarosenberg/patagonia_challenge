@@ -1,22 +1,17 @@
-import { Document, FilterQuery, model, Model, Schema } from "mongoose";
+import { Document, model, Model, Schema } from "mongoose";
 import { AppError } from "../../../shared/appErrors";
+import { IRepository } from '../../../core/ports/IRepository';
 
-export interface IMongoRepository<T extends Document<any, any, any>> {
-  create(payload: Partial<T>): Promise<T>;
-  findOne(criteria: FilterQuery<T>): Promise<T>;
-  searchOne(query: object): Promise<T | null>;
-}
-
-export class MongoDBRepository<T extends Document<any, any, any>>
-  implements IMongoRepository<T>
-{
-  public readonly model: Model<T>;
+export class MongoRepository<T extends Document> implements IRepository<T> {
+  protected readonly model: Model<T>;
+  private readonly modelName: string
 
   constructor(
-    private modelName: string,
-    schema: Schema<T>,
+    modelName: string,
+    schema: Schema<T>
   ) {
     this.model = model<T>(modelName, schema);
+    this.modelName = modelName
   }
 
   async create(data: Partial<T>): Promise<T> {
