@@ -1,8 +1,8 @@
+import { CompanyRepository } from "../../adapters/db/repositories/companyRepository"
 import { AppError } from "../../shared/appErrors"
 import { Filters } from "../../shared/commonTypes"
 import { PaginatedResult, PaginationOptions } from "../../shared/pagination"
 import { Company, CreateCompanyData } from "../domain/entities/companies"
-import { CompanyRepository } from "../domain/repositories/companyRepository"
 
 export class CompanyService {
   constructor(
@@ -10,16 +10,16 @@ export class CompanyService {
   ) {}
 
   async createCompany(data: CreateCompanyData): Promise<Company> {
-    const existingCompany = await this.companyRepository.findByCuit(data.cuit)
+    const existingCompany = await this.companyRepository.findOne({cuit: data.cuit})
     if (existingCompany) {
       throw new AppError("ALREADY_EXIST", "Company with this CUIT already exists")
     }
     return this.companyRepository.create(data)
   }
 
-  async getPaginatedCompanies(options: PaginationOptions, filters?: Filters): Promise<PaginatedResult<Company>> {
+  /*async getPaginatedCompanies(options: PaginationOptions, filters?: Filters): Promise<PaginatedResult<Company>> {
     return this.companyRepository.findPaginated(options, filters)
-  }
+  }*/
 
   async getPaginatedCompaniesWithTransferFilter(
     options: PaginationOptions,
@@ -29,10 +29,6 @@ export class CompanyService {
   }
 
   async getCompanyById(id: string): Promise<Company> {
-    const company = await this.companyRepository.findById(id)
-    if (!company) {
-      throw new AppError("NOT_FOUND", "Company not found")
-    }
-    return company
+    return await this.companyRepository.findOne({_id: id})
   }
 }
