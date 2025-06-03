@@ -1,34 +1,29 @@
-import { CompanyRepository } from "../../adapters/db/repositories/companyRepository"
 import { AppError } from "../../shared/appErrors"
 import { Filters } from "../../shared/commonTypes"
 import { PaginatedResult, PaginationOptions } from "../../shared/pagination"
 import { Company, CreateCompanyData } from "../domain/entities/companies"
+import { Repositories } from '../../adapters/db/repositories/index';
 
 export class CompanyService {
   constructor(
-    private readonly companyRepository: CompanyRepository
+    private readonly repositories: Repositories
   ) {}
 
   async createCompany(data: CreateCompanyData): Promise<Company> {
-    const existingCompany = await this.companyRepository.searchOne({cuit: data.cuit})
+    const existingCompany = await this.repositories.company.searchOne({cuit: data.cuit})
     if (existingCompany) {
       throw new AppError("ALREADY_EXIST", "Company with this CUIT already exists")
     }
-    return this.companyRepository.create(data)
+    return this.repositories.company.create(data)
   }
 
-  /*async getPaginatedCompanies(options: PaginationOptions, filters?: Filters): Promise<PaginatedResult<Company>> {
-    return this.companyRepository.findPaginated(options, filters)
-  }*/
-
-  async getPaginatedCompaniesWithTransferFilter(
-    options: PaginationOptions,
-    filters?: Filters,
-  ): Promise</*PaginatedResult<Company*/void> {
-    //aggregate query
+  async getPaginatedCompanies(options: PaginationOptions, filters?: Filters): Promise<PaginatedResult<Company>> {
+    //construct date filter
+    return await this.repositories.company.paginatedSearch(options, filters)
   }
 
-  async getCompanyById(id: string): Promise<Company> {
-    return await this.companyRepository.findOne({_id: id})
+  async getPaginatedCompaniesWithTransferFilter(options: PaginationOptions, filters?: Filters): Promise<PaginatedResult<Company>> {
+    //construct date filter
+    return await this.repositories.transfer.getPaginatedCompaniesWithTransferFilter(options, filters)
   }
 }

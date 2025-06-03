@@ -1,7 +1,7 @@
 export type PaginationOptions = {
   page: number
   limit: number
-  sort: Record<string, 1 | -1>
+  sort?: any //Record<string, 1 | -1>
 }
 
 export type PaginatedResult<T> = {

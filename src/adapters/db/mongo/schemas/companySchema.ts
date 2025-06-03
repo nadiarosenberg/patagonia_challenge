@@ -20,11 +20,11 @@ export const companySchema = new Schema<CompanyDocument>(
   },
   {
     timestamps: true,
+    versionKey: false,
     toJSON: {
       transform: (_, ret) => {
         ret.id = ret._id.toString()
         delete ret._id
-        delete ret.__v
         return ret
       },
     },

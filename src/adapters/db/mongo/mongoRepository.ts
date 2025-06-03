@@ -1,6 +1,8 @@
 import { Document, model, Model, Schema } from "mongoose";
 import { AppError } from "../../../shared/appErrors";
 import { IRepository } from '../../../core/ports/IRepository';
+import { PaginatedResult, PaginationOptions } from "../../../shared/pagination";
+import { paginate } from "./paginate";
 
 export class MongoRepository<T extends Document> implements IRepository<T> {
   protected readonly model: Model<T>;
@@ -48,6 +50,24 @@ export class MongoRepository<T extends Document> implements IRepository<T> {
       throw new AppError(
         "NOT_FOUND",
         `${this.modelName} document not found, error: ${error}`,
+      );
+    }
+  }
+
+  async paginatedSearch(
+    params: PaginationOptions,
+    filters?: object
+  ): Promise<PaginatedResult<T>> {
+    try {
+      return paginate<T>(
+        this.model,
+        params,
+        filters
+      );
+    } catch (error: any) {
+      throw new AppError(
+        "SERVER_ERROR",
+        `Find ${this.modelName} error: ${error}`,
       );
     }
   }

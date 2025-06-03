@@ -4,5 +4,6 @@ import { CompanyController } from "../controllers/companyController"
 export const createCompanyRoutes = (companyController: CompanyController): Router => {
   const router = Router()
   router.post("/", companyController.createCompany)
+  router.get("/", companyController.getPaginatedCompanies)
   return router
 }

@@ -2,8 +2,8 @@ import { ZodError } from "zod";
 import { AppError } from "../../../shared/appErrors";
 import { NextFunction, Request, Response } from "express";
 
-function present(status: number, reason: string, msg: string, res: any) {
-  return res.status(status).json({
+function present(status: number, reason: string, msg: any, res: Response) {
+  res.status(status).json({
     status,
     error: {
       reason,
@@ -19,10 +19,11 @@ export function manageError(
   next: NextFunction
 ) {
   if (error instanceof ZodError) {
-    return present(400, "INPUT_ERROR", JSON.parse(error.message), res);
+    return present(400, "INPUT_ERROR", error.errors, res);
   }
 
   const err = error as AppError;
+
   switch (err?.code) {
     case "BAD_PARAMETERS":
     case "ALREADY_EXIST":

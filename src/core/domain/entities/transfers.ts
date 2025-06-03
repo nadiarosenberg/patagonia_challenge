@@ -12,7 +12,6 @@ export type Transfer = {
 export type CreateTransferData = {
   amount: number
   companyId: string
-  companyDenomination: string
   debitAccount: string
   creditAccount: string
 }
