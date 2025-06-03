@@ -11,6 +11,7 @@ export class TransferController {
       const transfer = await this.transferService.createTransfer(validatedData)
       res.status(201).json(transfer);
     } catch (error) {
+      console.error(error)
       next(error)
     }
   }

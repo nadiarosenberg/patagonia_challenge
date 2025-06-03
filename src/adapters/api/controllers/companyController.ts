@@ -11,7 +11,7 @@ export class CompanyController {
       const company = await this.companyService.createCompany(validatedData)
       res.status(201).json(company);
     } catch (error) {
-      console.log(error)
+      console.error(error)
       next(error)
     }
   }
@@ -23,6 +23,7 @@ export class CompanyController {
       const results = await this.companyService.getPaginatedCompanies({page, limit, sort}, rest)
       res.status(200).json(results);
     } catch (error) {
+      console.error(error)
       next(error)
     }
   }
@@ -34,6 +35,7 @@ export class CompanyController {
       const result = await this.companyService.getPaginatedCompaniesWithTransferFilter({page, limit, sort}, rest)
       res.status(200).json(result);
     } catch (error) {
+      console.error(error)
       next(error)
     }
   }
