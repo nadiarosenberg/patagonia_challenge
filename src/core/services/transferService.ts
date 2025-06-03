@@ -7,7 +7,7 @@ export class TransferService {
   ) {}
 
   async createTransfer(data: CreateTransferData): Promise<Transfer> {
-    const company = await this.repositories.company.findOne({id: data.companyId})
+    const company = await this.repositories.company.findOne({_id: data.companyId})
     return await this.repositories.transfer.create({...data, companyDenomination: company.denomination})
   }
 }

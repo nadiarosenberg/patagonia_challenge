@@ -1,11 +1,12 @@
 import { Company } from "../../../core/domain/entities/companies";
 import { IRepository } from "../../../core/ports/IRepository";
 import { ITransferRepository } from "../../../core/ports/ITransferRepository";
+import { CompanyDocument } from "../mongo/schemas/companySchema";
 import { CompanyRepository } from "./companyRepository";
 import { TransferRepository } from "./transferRepository";
 
 export interface Repositories {
-  company: IRepository<Company>,
+  company: IRepository<CompanyDocument>,
   transfer: ITransferRepository
 }
 
