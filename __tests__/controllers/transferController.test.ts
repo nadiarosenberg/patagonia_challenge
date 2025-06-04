@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { TransferService } from '../../src/core/services/transferService';
 import { TransferController } from '../../src/adapters/api/controllers/transferController';
 import { createTransferSchema } from '../../src/adapters/api/validators/transferValidators';
-import { createTransferMock } from '../mocks/transferMocks';
+import { createTransferMock, transferMock } from '../mocks/transferMocks';
+import { AppError } from '../../src/shared/appErrors';
 
 describe('transferController', () => {
   let transferServiceMock: Partial<TransferService>;
@@ -27,24 +28,23 @@ describe('transferController', () => {
   });
   describe('createTransfer', () => {
     it('should create a transfer and return 201 with the transfer data', async () => {
-      const fakeTransfer = { id: 'transferId1', ...createTransferMock };
-      (transferServiceMock.createTransfer as jest.Mock).mockResolvedValue(fakeTransfer);
+      (transferServiceMock.createTransfer as jest.Mock).mockResolvedValue(transferMock);
       await controller.createTransfer(req as Request, res as Response, next as NextFunction);
       expect(transferServiceMock.createTransfer).toHaveBeenCalledWith(
         createTransferSchema.parse(req.body)
       );
       expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(fakeTransfer);
+      expect(res.json).toHaveBeenCalledWith(transferMock);
       expect(next).not.toHaveBeenCalled();
     });
-    it('should call next with error when validation fails', async () => {
+    it('should call next with error when validation fails (invalid amount)', async () => {
       req.body = { ...createTransferMock, amount: -5};
       await controller.createTransfer(req as Request, res as Response, next as NextFunction);
       expect(next).toHaveBeenCalled();
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
-    it('should call next with error when validation fails', async () => {
+    it('should call next with error when validation fails (debitAccount = creditAccount)', async () => {
       req.body = { ...createTransferMock, debitAccount: "123", creditAccount: "123"};
       await controller.createTransfer(req as Request, res as Response, next as NextFunction);
       expect(next).toHaveBeenCalled();
@@ -52,7 +52,7 @@ describe('transferController', () => {
       expect(res.json).not.toHaveBeenCalled();
     });
     it('should call next with error when service throws', async () => {
-      const error = new Error('Service error');
+      const error = new AppError('SERVER_ERROR');
       (transferServiceMock.createTransfer as jest.Mock).mockRejectedValue(error);
       await controller.createTransfer(req as Request, res as Response, next as NextFunction);
       expect(transferServiceMock.createTransfer).toHaveBeenCalled();

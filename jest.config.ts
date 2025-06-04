@@ -15,7 +15,9 @@ const config: JestConfigWithTsJest = {
     '/node_modules/',
     '/dist/',
     'src/app.ts',
-    'src/config/'
+    'src/config/',
+    'src/adapters/api/routes',
+    'src/adapters/db'       
   ],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}'

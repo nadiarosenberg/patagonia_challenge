@@ -4,6 +4,7 @@ import { ITransferRepository } from "../../../core/ports/ITransferRepository";
 import { PaginatedResult, PaginationOptions } from "../../../shared/pagination";
 import { MongoRepository } from "../mongo/mongoRepository";
 import { TransferDocument, transferSchema } from "../mongo/schemas/transferSchema";
+import { AppError } from "../../../shared/appErrors";
 
 export class TransferRepository extends MongoRepository<TransferDocument> implements ITransferRepository {
   constructor() {
@@ -14,63 +15,68 @@ export class TransferRepository extends MongoRepository<TransferDocument> implem
     options: PaginationOptions,
     match: object
   ): Promise<PaginatedResult<Company>> {
-    const { sort, page, limit } = options;
-    const skip = (page - 1) * limit;
-    const pipeline: PipelineStage[] = [
-      {
-        $match: match
-      },
-      {
-        $group: {
-          _id: "$companyId",
+    try{
+      const { sort, page, limit } = options;
+      const skip = (page - 1) * limit;
+      const pipeline: PipelineStage[] = [
+        {
+          $match: match
         },
-      },
-      {
-        $project: {
-          companyId: "$_id",
-          _id: 0,
+        {
+          $group: {
+            _id: "$companyId",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "companies",
-          localField: "companyId",
-          foreignField: "_id", 
-          as: "company",
+        {
+          $project: {
+            companyId: "$_id",
+            _id: 0,
+          },
         },
-      },
-      {
-        $unwind: "$company",
-      },
-      {
-        $sort: { "company.createdAt": -1 }
-      },
-      {
-        $facet: {
-          results: [
-            { $skip: skip },
-            { $limit: limit },
-          ],
-          totalResults: [{ $count: "total" }],
+        {
+          $lookup: {
+            from: "companies",
+            localField: "companyId",
+            foreignField: "_id", 
+            as: "company",
+          },
         },
-      },
-    ];
-    const res = await this.model.aggregate(pipeline)
-    const results = res.length > 0? res[0] : [{results: [], totalResults: []}]
-    const total = results.totalResults.length > 0 ? results.totalResults[0].total : 0;
-    const totalPages = total > 0 ? Math.ceil(total / limit) : 0;
-    return {
-      page,
-      limit,
-      totalPages,
-      total: results.totalResults[0].total,
-      results: results.results.map(function(r: any) {
-        const { _id, ...restData } = r.company
-        return {
-          ...restData,
-          id: _id.toString(), 
-        };
-      })
-    };
+        {
+          $unwind: "$company",
+        },
+        {
+          $sort: { "company.createdAt": -1 }
+        },
+        {
+          $facet: {
+            results: [
+              { $skip: skip },
+              { $limit: limit },
+            ],
+            totalResults: [{ $count: "total" }],
+          },
+        },
+      ];
+      const res = await this.model.aggregate(pipeline)
+      const results = res.length > 0? res[0] : [{results: [], totalResults: []}]
+      const total = results.totalResults.length > 0 ? results.totalResults[0].total : 0;
+      const totalPages = total > 0 ? Math.ceil(total / limit) : 0;
+      return {
+        page,
+        limit,
+        totalPages,
+        total: results.totalResults[0].total,
+        results: results.results.map(function(r: any) {
+          const { _id, ...restData } = r.company
+          return {
+            ...restData,
+            id: _id.toString(), 
+          };
+        })
+      };
+    }catch(error){
+      console.error(error)
+      throw new AppError("SERVER_ERROR")
+    }
   }
 }

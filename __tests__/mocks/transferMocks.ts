@@ -4,5 +4,7 @@ export const createTransferMock: CreateTransferData = {
   amount: 100,
   debitAccount: 'ACC123',
   creditAccount: 'ACC456',
-  companyId: 'companyId1',
+  companyId: '123',
 }
+
+export const transferMock = {...createTransferMock, id: "123"}
