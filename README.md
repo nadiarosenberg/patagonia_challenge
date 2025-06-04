@@ -25,9 +25,9 @@ npm install
 
 ## Development Execution
 Create a .env file in the project root and use the following as a reference:
-HTTP_PORT=3000
-MONGO_URI=mongodb://localhost:27017/companies-api
-TIMEZONE=America/Argentina/Buenos_Aires
+* HTTP_PORT=3000
+* MONGO_URI=mongodb://localhost:27017/companies-api
+* TIMEZONE=America/Argentina/Buenos_Aires
 
 To start the development server:
 
@@ -35,7 +35,7 @@ To start the development server:
 npm run dev
 ```
 
-The server will run at http://localhost:<PORT> 
+The server will run at http://localhost${port}
 Where <PORT> is the value of HTTP_PORT defined in your .env file.
 
 ## Testing
@@ -47,4 +47,4 @@ npm run test
 ```
 
 ## Docs
-Swagger documentation is available at http://localhost::<PORT> /docs
+Swagger documentation is available at http://localhost:{port}/docs
