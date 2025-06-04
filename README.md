@@ -1,6 +1,6 @@
 # Project Execution Guide
 
-This guide explains how to set up and run the **Pstagonia Challenge** project.
+This guide explains how to set up and run the **Patagonia Challenge** project.
 
 ## Prerequisites
 
