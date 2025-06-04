@@ -4,12 +4,12 @@ import { PaginatedResult, PaginationOptions } from "../../../shared/pagination";
 export async function paginate<T extends Document>(
   model: Model<T>,
   params: PaginationOptions,
-  filters: object = {}
+  match: object = {}
 ): Promise<PaginatedResult<T>> {
   const { sort, page, limit } = params;
   const skip = (page - 1) * limit;
   const aggregationPipeline = [
-    { $match: filters },
+    { $match: match },
     { $sort: sort || {"createdAt": -1} },
     {
       $facet: {

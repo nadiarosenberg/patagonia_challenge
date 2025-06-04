@@ -18,7 +18,7 @@ export class CompanyController {
 
   getPaginatedCompanies = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const validatedData = getPaginatedCompaniesSchema.parse(req.body)
+      const validatedData = getPaginatedCompaniesSchema.parse(req.query)
       const {page, limit, sort, ...rest} = validatedData
       const results = await this.companyService.getPaginatedCompanies({page, limit, sort}, rest)
       res.status(200).json(results);
@@ -30,7 +30,7 @@ export class CompanyController {
 
   getCompaniesWithTransactionFilter = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const validatedData = getPaginatedCompaniesSchema.parse(req.body)
+      const validatedData = getPaginatedCompaniesSchema.parse(req.query)
       const {page, limit, sort, ...rest} = validatedData
       const result = await this.companyService.getPaginatedCompaniesWithTransferFilter({page, limit, sort}, rest)
       res.status(200).json(result);

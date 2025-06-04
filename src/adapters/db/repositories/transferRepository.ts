@@ -1,7 +1,6 @@
 import { PipelineStage } from "mongoose";
 import { Company } from "../../../core/domain/entities/companies";
 import { ITransferRepository } from "../../../core/ports/ITransferRepository";
-import { Filters } from "../../../shared/commonTypes";
 import { PaginatedResult, PaginationOptions } from "../../../shared/pagination";
 import { MongoRepository } from "../mongo/mongoRepository";
 import { TransferDocument, transferSchema } from "../mongo/schemas/transferSchema";
@@ -13,18 +12,13 @@ export class TransferRepository extends MongoRepository<TransferDocument> implem
 
   async getPaginatedCompaniesWithTransferFilter(
     options: PaginationOptions,
-    filters?: Filters
+    match: object
   ): Promise<PaginatedResult<Company>> {
     const { sort, page, limit } = options;
     const skip = (page - 1) * limit;
     const pipeline: PipelineStage[] = [
       {
-        $match: {
-          /*createdAt: {
-            $gte: new Date(dateFrom),
-            $lte: new Date(dateTo),
-          },*/
-        },
+        $match: match
       },
       {
         $group: {

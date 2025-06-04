@@ -56,13 +56,13 @@ export class MongoRepository<T extends Document> implements IRepository<T> {
 
   async paginatedSearch(
     params: PaginationOptions,
-    filters?: object
+    match: object
   ): Promise<PaginatedResult<T>> {
     try {
       return paginate<T>(
         this.model,
         params,
-        filters
+        match
       );
     } catch (error: any) {
       throw new AppError(
