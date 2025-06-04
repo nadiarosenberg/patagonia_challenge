@@ -11,6 +11,8 @@ import { TransferController } from "./adapters/api/controllers/transferControlle
 import { createTransferRoutes } from "./adapters/api/routes/transferRoutes"
 import { TransferService } from "./core/services/transferService"
 import { getRepositories } from "./adapters/db/repositories"
+import swaggerUi from "swagger-ui-express"
+import { swaggerSpec } from "./config/docs/swagger"
 
 class App {
   private app: express.Application
@@ -42,6 +44,9 @@ class App {
     // API routes
     this.app.use("/v1/companies", createCompanyRoutes(companyController))
     this.app.use("/v1/transfers", createTransferRoutes(transferController, companyController))
+
+    // Swagger documentation
+    this.app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
   }
 
   public async start(): Promise<void> {
