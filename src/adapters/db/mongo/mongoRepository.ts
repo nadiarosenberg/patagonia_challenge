@@ -1,5 +1,5 @@
 import { Document, model, Model, Schema } from "mongoose";
-import { AppError } from "../../../shared/appErrors";
+import { AppError, ErrorReason } from "../../../shared/appErrors";
 import { IRepository } from '../../../core/ports/IRepository';
 import { PaginatedResult, PaginationOptions } from "../../../shared/pagination";
 import { paginate } from "./paginate";
@@ -21,7 +21,7 @@ export class MongoRepository<T extends Document> implements IRepository<T> {
       return this.model.create(data);
     } catch (error) {
       throw new AppError(
-        "NOT_CREATED",
+        ErrorReason.NOT_CREATED,
         `${this.modelName} document not created, error: ${error}`,
       );
     }
@@ -31,12 +31,12 @@ export class MongoRepository<T extends Document> implements IRepository<T> {
     try {
       const result = await this.model.findOne(query).exec();
       if (!result) {
-        throw new AppError("NOT_FOUND", `${this.modelName} not found`);
+        throw new AppError(ErrorReason.NOT_FOUND, `${this.modelName} not found`);
       }
       return result;
     } catch (error) {
       throw new AppError(
-        "NOT_FOUND",
+        ErrorReason.NOT_FOUND,
         `${this.modelName} document not found, error: ${error}`,
       );
     }
@@ -48,7 +48,7 @@ export class MongoRepository<T extends Document> implements IRepository<T> {
       return result;
     } catch (error) {
       throw new AppError(
-        "NOT_FOUND",
+        ErrorReason.NOT_FOUND,
         `${this.modelName} document not found, error: ${error}`,
       );
     }
@@ -66,7 +66,7 @@ export class MongoRepository<T extends Document> implements IRepository<T> {
       );
     } catch (error: any) {
       throw new AppError(
-        "SERVER_ERROR",
+        ErrorReason.SERVER_ERROR,
         `Find ${this.modelName} error: ${error}`,
       );
     }

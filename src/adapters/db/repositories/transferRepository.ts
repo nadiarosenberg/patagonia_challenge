@@ -4,7 +4,7 @@ import { ITransferRepository } from "../../../core/ports/ITransferRepository";
 import { PaginatedResult, PaginationOptions } from "../../../shared/pagination";
 import { MongoRepository } from "../mongo/mongoRepository";
 import { TransferDocument, transferSchema } from "../mongo/schemas/transferSchema";
-import { AppError } from "../../../shared/appErrors";
+import { AppError, ErrorReason } from "../../../shared/appErrors";
 
 export class TransferRepository extends MongoRepository<TransferDocument> implements ITransferRepository {
   constructor() {
@@ -76,7 +76,7 @@ export class TransferRepository extends MongoRepository<TransferDocument> implem
       };
     }catch(error){
       console.error(error)
-      throw new AppError("SERVER_ERROR")
+      throw new AppError(ErrorReason.SERVER_ERROR)
     }
   }
 }

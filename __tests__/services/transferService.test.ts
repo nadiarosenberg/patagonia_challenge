@@ -1,5 +1,5 @@
 import { TransferService } from '../../src/core/services/transferService';
-import { AppError } from '../../src/shared/appErrors';
+import { AppError, ErrorReason } from '../../src/shared/appErrors';
 import { mockRepositories } from '../mocks/commonMocks';
 import { companyMock } from '../mocks/companyMocks';
 import { createTransferMock, transferMock } from '../mocks/transferMocks';
@@ -31,7 +31,7 @@ describe('transferService', () => {
     });
     it('should throw if transfer creation fails', async () => {
       mockRepositories.company.findOne = jest.fn().mockResolvedValue(companyMock);
-      mockRepositories.transfer.create = jest.fn().mockRejectedValue(new AppError('SERVER_ERROR'));
+      mockRepositories.transfer.create = jest.fn().mockRejectedValue(new AppError(ErrorReason.SERVER_ERROR));
       await expect(service.createTransfer(createTransferMock)).rejects.toThrow(AppError);
     });
   });

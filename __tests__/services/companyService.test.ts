@@ -1,6 +1,6 @@
 import { CompanyService } from '../../src/core/services/companyService';
 import { companyMock, createCompanyMock, zonedFilterMock } from '../mocks/companyMocks';
-import { AppError } from '../../src/shared/appErrors';
+import { AppError, ErrorReason } from '../../src/shared/appErrors';
 import { PaginatedResult } from '../../src/shared/pagination';
 import { Company } from '../../src/core/domain/entities/companies';
 import { fixedDate, mockRepositories } from '../mocks/commonMocks';
@@ -58,7 +58,7 @@ describe('companyService', () => {
       expect(mockRepositories.company.create).not.toHaveBeenCalled();
     });
     it('should throw if company repository fails', async () => {
-      mockRepositories.company.searchOne = jest.fn().mockRejectedValue(new AppError("NOT_FOUND"));
+      mockRepositories.company.searchOne = jest.fn().mockRejectedValue(new AppError(ErrorReason.NOT_FOUND));
       await expect(service.createCompany(createCompanyMock)).rejects.toThrow(AppError);
       expect(mockRepositories.company.create).not.toHaveBeenCalled();
     });
@@ -83,7 +83,7 @@ describe('companyService', () => {
     it('should throw if company repository fails', async () => {
       const options = { page: 1, limit: 10};
       service.getCompanyMatch = jest.fn().mockReturnValue({})
-      mockRepositories.company.paginatedSearch = jest.fn().mockRejectedValue(new AppError("SERVER_ERROR"));
+      mockRepositories.company.paginatedSearch = jest.fn().mockRejectedValue(new AppError(ErrorReason.SERVER_ERROR));
       await expect(service.getPaginatedCompanies(options)).rejects.toThrow(AppError);
     });
   });
@@ -109,7 +109,7 @@ describe('companyService', () => {
     it('should throw if transfer repository fails', async () => {
       const options = { page: 1, limit: 10};
       service.getCompanyMatch = jest.fn().mockReturnValue({})
-      mockRepositories.transfer.getPaginatedCompaniesWithTransferFilter = jest.fn().mockRejectedValue(new AppError("SERVER_ERROR"));
+      mockRepositories.transfer.getPaginatedCompaniesWithTransferFilter = jest.fn().mockRejectedValue(new AppError(ErrorReason.SERVER_ERROR));
       await expect(service.getPaginatedCompaniesWithTransferFilter(options)).rejects.toThrow(AppError);
     });
   });

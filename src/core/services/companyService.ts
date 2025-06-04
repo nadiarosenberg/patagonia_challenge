@@ -1,4 +1,4 @@
-import { AppError } from "../../shared/appErrors"
+import { AppError, ErrorReason } from "../../shared/appErrors"
 import { Filters } from "../../shared/commonTypes"
 import { PaginatedResult, PaginationOptions } from "../../shared/pagination"
 import { Company, CreateCompanyData } from "../domain/entities/companies"
@@ -13,7 +13,6 @@ export class CompanyService {
   ) {}
 
   getCompanyMatch(filters?: Filters) : object {
-    console.log('-----filters', filters)
     //add more filters if required
     let matchConditions: any = {}
     if(!filters?.dateFrom && !filters?.dateTo){
@@ -43,7 +42,7 @@ export class CompanyService {
   async createCompany(data: CreateCompanyData): Promise<Company> {
     const existingCompany = await this.repositories.company.searchOne({cuit: data.cuit})
     if (existingCompany) {
-      throw new AppError("ALREADY_EXIST", "Company with this CUIT already exists")
+      throw new AppError(ErrorReason.ALREADY_EXIST, "Company with this CUIT already exists")
     }
     return this.repositories.company.create(data)
   }

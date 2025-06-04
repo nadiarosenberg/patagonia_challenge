@@ -3,7 +3,7 @@ import { TransferService } from '../../src/core/services/transferService';
 import { TransferController } from '../../src/adapters/api/controllers/transferController';
 import { createTransferSchema } from '../../src/adapters/api/validators/transferValidators';
 import { createTransferMock, transferMock } from '../mocks/transferMocks';
-import { AppError } from '../../src/shared/appErrors';
+import { AppError, ErrorReason } from '../../src/shared/appErrors';
 
 describe('transferController', () => {
   let transferServiceMock: Partial<TransferService>;
@@ -52,7 +52,7 @@ describe('transferController', () => {
       expect(res.json).not.toHaveBeenCalled();
     });
     it('should call next with error when service throws', async () => {
-      const error = new AppError('SERVER_ERROR');
+      const error = new AppError(ErrorReason.SERVER_ERROR);
       (transferServiceMock.createTransfer as jest.Mock).mockRejectedValue(error);
       await controller.createTransfer(req as Request, res as Response, next as NextFunction);
       expect(transferServiceMock.createTransfer).toHaveBeenCalled();

@@ -3,7 +3,7 @@ import { CompanyService } from '../../src/core/services/companyService';
 import { CompanyController } from '../../src/adapters/api/controllers/companyController';
 import { companyMock, createCompanyMock } from "../mocks/companyMocks";
 import { mockNext, mockRequest, mockRequestWithQuery, mockResponse } from "../mocks/commonMocks";
-import { AppError } from "../../src/shared/appErrors";
+import { AppError, ErrorReason } from "../../src/shared/appErrors";
 
 const mockCompanyService = {
   createCompany: jest.fn(),
@@ -37,7 +37,7 @@ describe("companyController", () => {
     it("should call next on service failure", async () => {
       const req = mockRequest(createCompanyMock) as Request;
       const res = mockResponse() as Response;
-      const error = new AppError("SERVER_ERROR");
+      const error = new AppError(ErrorReason.SERVER_ERROR);
       mockCompanyService.createCompany = jest.fn().mockRejectedValue(error);
       await controller.createCompany(req, res, mockNext);
       expect(mockNext).toHaveBeenCalledWith(error);
@@ -82,7 +82,7 @@ describe("companyController", () => {
     it("should call next on service failure", async () => {
       const req = mockRequestWithQuery({ page: 1, limit: 10 }) as Request;
       const res = mockResponse() as Response;
-      const error = new AppError("SERVER_ERROR");
+      const error = new AppError(ErrorReason.SERVER_ERROR);
       mockCompanyService.getPaginatedCompanies = jest.fn().mockRejectedValue(error);
       await controller.getPaginatedCompanies(req, res, mockNext);
       expect(mockNext).toHaveBeenCalledWith(error);
@@ -127,7 +127,7 @@ describe("companyController", () => {
     it("should call next on service failure", async () => {
       const req = mockRequestWithQuery({ page: 1, limit: 10 }) as Request;
       const res = mockResponse() as Response;
-      const error = new AppError("SERVER_ERROR");
+      const error = new AppError(ErrorReason.SERVER_ERROR);
       mockCompanyService.getPaginatedCompaniesWithTransferFilter = jest.fn().mockRejectedValue(error);
       await controller.getCompaniesWithTransactionFilter(req, res, mockNext);
       expect(mockNext).toHaveBeenCalledWith(error);
