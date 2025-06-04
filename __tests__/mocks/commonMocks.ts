@@ -26,3 +26,9 @@ export const mockRepositories = {
     getPaginatedCompaniesWithTransferFilter: jest.fn(),
   },
 } as unknown as Repositories;
+
+export const mockConfigVars = {
+  timezone: "America/Argentina/Buenos_Aires"
+}
+
+export const fixedDate = new Date("2025-06-15T12:00:00Z");

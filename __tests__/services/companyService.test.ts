@@ -1,9 +1,9 @@
 import { CompanyService } from '../../src/core/services/companyService';
-import { companyMock, createCompanyMock } from '../mocks/companyMocks';
+import { companyMock, createCompanyMock, zonedFilterMock } from '../mocks/companyMocks';
 import { AppError } from '../../src/shared/appErrors';
 import { PaginatedResult } from '../../src/shared/pagination';
 import { Company } from '../../src/core/domain/entities/companies';
-import { mockRepositories } from '../mocks/commonMocks';
+import { fixedDate, mockRepositories } from '../mocks/commonMocks';
 
 const service = new CompanyService(mockRepositories);
 
@@ -11,6 +11,38 @@ describe('companyService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+  describe("getCompanyMatch", () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(fixedDate);
+    });
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+  
+    it("should return current month range if no filters provided", () => {
+      const match: any = service.getCompanyMatch();
+      expect(match).toEqual(zonedFilterMock)
+    })
+    it("should apply dateFrom filter", () => {
+      const filters = { dateFrom: "2025-05-01T00:00:00Z" };
+      const match: object = service.getCompanyMatch(filters);
+      expect(match).toEqual({createdAt: {$gte: new Date(filters.dateFrom)}});
+    });
+    it("should apply dateTo filter", () => {
+      const filters = { dateTo: "2025-07-01T00:00:00Z" };
+      const match: object = service.getCompanyMatch(filters);
+      expect(match).toEqual({createdAt: {$lte: new Date(filters.dateTo)}});
+    });
+    it("should apply both dateFrom and dateTo filters", () => {
+      const filters = {
+        dateFrom: "2025-05-01T00:00:00Z",
+        dateTo: "2025-07-01T00:00:00Z"
+      };
+      const match: object = service.getCompanyMatch(filters);
+      expect(match).toEqual({createdAt: {$gte: new Date(filters.dateFrom), $lte: new Date(filters.dateTo)}});
+    });
+  });  
+
   describe('createCompany', () => {
     it('should create a company if CUIT does not exist', async () => {
       mockRepositories.company.searchOne = jest.fn().mockResolvedValue(null);

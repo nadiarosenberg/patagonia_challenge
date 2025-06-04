@@ -13,6 +13,7 @@ export class CompanyService {
   ) {}
 
   getCompanyMatch(filters?: Filters) : object {
+    console.log('-----filters', filters)
     //add more filters if required
     let matchConditions: any = {}
     if(!filters?.dateFrom && !filters?.dateTo){
